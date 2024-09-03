@@ -1,47 +1,60 @@
 const QuizDao = require("../Dao/quiz.dao");
-
+const User = require("../Entities/user.entities"); 
 module.exports = class QuizService {
-    constructor() {
-        this.quizdao = new QuizDao();
-    }
+  constructor() {
+    this.quizDao = new QuizDao();
+  }
 
-    async createQuiz(data) {
-        console.log("create quiz service");
-        return await this.quizdao.createQuiz(data);
-    }
+  async createQuiz(data) {
+    return await this.quizDao.createQuiz(data);
+  }
 
-    async updateQuiz(quizId, updateData) {
-        console.log("update quiz service");
-        
-        // Check if the quiz exists
-        const existingQuiz = await this.quizdao.getQuizById(quizId);
-        if (!existingQuiz) {
-            throw new Error("Quiz Not Found");
-        }
+  async getQuizById(quizId) {
+    const quiz = await this.quizDao.getQuizById(quizId);
+    if (!quiz) throw new Error("Quiz not found");
+    return quiz;
+  }
 
-        // If it exists, update the quiz
-        return await this.quizdao.updateQuiz(quizId, updateData);
-    }
+  async getAllQuizzes() {
+    return await this.quizDao.getAllQuizzes();
+  }
 
-    async getAllQuizzes() {
-        console.log("get all quizzes service");
-        return await this.quizdao.getAllQuiz();
-    }
+  async updateQuiz(quizId, update) {
+    const quiz = await this.quizDao.updateQuiz(quizId, update);
+    if (!quiz) throw new Error("Quiz not found");
+    return quiz;
+  }
 
-    async getQuizById(quizId) {
-        console.log("get quiz by id service");
-        return await this.quizdao.getQuizById(quizId);
-    }
+  async deleteQuiz(quizId) {
+    const quiz = await this.quizDao.deleteQuiz(quizId);
+    if (!quiz) throw new Error("Quiz not found");
+    return quiz;
+  }
 
-    async deleteQuiz(quizId) {
-        console.log("delete quiz service");
-        
-        // Check if the quiz exists
-        const existingQuiz = await this.quizdao.getQuizById(quizId);
-        if (!existingQuiz) {
-            throw new Error("Quiz Not Found");
-        }
-        
-        return await this.quizdao.deleteQuiz(quizId);
-    }
+  async addStudentMarks(quizId, studentId, marks, checkedBy) {
+    const quiz = await this.quizDao.addStudentMarks(quizId, marks, checkedBy);
+    if (!quiz) throw new Error("Quiz not found");
+
+    // Update student's quiz data
+    const student = await User.findById(studentId);
+    if (!student) throw new Error("Student not found");
+    student.quiz = quizId;
+    await student.save();
+
+    return quiz;
+  }
+
+  async attemptQuiz(quizId, studentId) {
+    const quiz = await this.quizDao.getQuizById(quizId);
+    if (!quiz) throw new Error("Quiz not found");
+
+    const student = await User.findById(studentId);
+    if (!student) throw new Error("Student not found");
+
+    // Update student's quiz
+    student.quiz = quizId;
+    await student.save();
+
+    return quiz;
+  }
 };
