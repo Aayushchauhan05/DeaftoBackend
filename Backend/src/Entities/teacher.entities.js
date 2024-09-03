@@ -28,6 +28,6 @@ ref:"quiz"
   }
 });
 
-const Teacher = mongoose.model('TeacherLogin', teacherLoginSchema);
+const Teacher = mongoose.model('Teacher', teacherLoginSchema);
 
 module.exports = Teacher;

@@ -23,6 +23,8 @@ module.exports=class userController {
         }
         
     }
+
+    
     loginUser=async (req,res)=>{
 try {
     console.log("controller->teacher.controller->loginTeacher");
