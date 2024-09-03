@@ -4,19 +4,16 @@ const QuizController = require("../Controller/quiz.controller");
 const router = express.Router();
 const quizController = new QuizController();
 
-// Route to create a new quiz
-router.post("/quiz", quizController.createQuiz);
+router.post("/create", quizController.createQuiz);
+router.get("/:quizId", quizController.getQuizById);
+router.get("/", quizController.getAllQuizzes);
+router.put("/:quizId", quizController.updateQuiz);
+router.delete("/:quizId", quizController.deleteQuiz);
 
-// Route to update an existing quiz by ID
-router.put("/quiz/:id", quizController.updateQuiz);
+// Route for students to attempt a quiz
+router.post("/attempt/:quizId/student/:studentId", quizController.attemptQuiz);
 
-// Route to get all quizzes
-router.get("/quiz", quizController.getAllQuizzes);
-
-// Route to get a quiz by ID
-router.get("/quiz/:id", quizController.getQuizById);
-
-// Route to delete a quiz by ID
-router.delete("/quiz/:id", quizController.deleteQuiz);
+// Route for teachers to review and add marks to a student's quiz
+router.post("/review/:quizId/student/:studentId", quizController.addStudentMarks);
 
 module.exports = router;
